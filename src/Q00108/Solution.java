@@ -1,20 +1,20 @@
 package Q00108;
 
-import java.util.Arrays;
 
 public class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
 
-        return makeTreeNode(nums);
+        return makeTreeNode(nums, 0, nums.length - 1);
     }
 
-    public TreeNode makeTreeNode(int[] sub) {
-        if(sub.length < 1)
+    public TreeNode makeTreeNode(int[] arr, int left, int right) {
+        if(left > right)
             return null;
+        int mid = (left + right + 1) / 2;
 
-        TreeNode treeNode = new TreeNode(sub[sub.length / 2]);
-        treeNode.left = makeTreeNode(Arrays.copyOfRange(sub, 0, sub.length / 2));
-        treeNode.right = makeTreeNode(Arrays.copyOfRange(sub, sub.length / 2 + 1, sub.length));
+        TreeNode treeNode = new TreeNode(arr[mid]);
+        treeNode.left = makeTreeNode(arr, left, mid - 1);
+        treeNode.right = makeTreeNode(arr, mid + 1, right);
 
         return treeNode;
     }
