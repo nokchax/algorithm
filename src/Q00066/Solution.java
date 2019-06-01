@@ -9,7 +9,7 @@ public class Solution {
         if(position < 0) {
             int[] newArray = new int[digits.length + 1];
             newArray[0] = 1;
-            System.arraycopy(digits, 0, newArray, 1, digits.length);
+            System.arraycopy(digits, 0, newArray, 1, digits.length); //생각해보면 없어도 되는 로직
             return newArray;
         }
 
