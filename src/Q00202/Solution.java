@@ -14,7 +14,7 @@ public class Solution {
                 temp += Math.pow(n % 10, 2);
                 n /= 10;
             }
-            
+
             if(temp == 1)
                 return true;
 
