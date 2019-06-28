@@ -2,11 +2,14 @@ package leetcode.Q00287;
 
 public class Solution {
     public int findDuplicate(int[] nums) {
-        int expectedSum = nums.length * (nums.length - 1) / 2;
+        for(int i = 0 ; i < nums.length ; ++i) {
+            int target = nums[i];
+            for(int j = i + 1 ; j < nums.length ; ++j) {
+                if(target == nums[j])
+                    return target;
+            }
+        }
 
-        for(int num : nums)
-            expectedSum -= num;
-
-        return expectedSum * -1;
+        return -1;
     }
 }
