@@ -8,7 +8,7 @@ public class Solution {
         while(xor > 0) {
             if(xor % 2 == 1)
                 count++;
-            
+
             xor /= 2;
         }
 
