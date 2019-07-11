@@ -12,6 +12,5 @@ public class Solution {
 
     private void rotateOne(int y, int x, int[][] matrix) {
         int temp = matrix[y][x];
-        matrix[y][x] =
     }
 }
