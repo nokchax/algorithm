@@ -7,7 +7,6 @@ public class MinStack {
     Stack<Integer> stack;
     PriorityQueue<Integer> pq;
 
-    /** initialize your data structure here. */
     public MinStack() {
         stack = new Stack<>();
         pq = new PriorityQueue<>();
