@@ -1,75 +1,32 @@
 package leetcode.Q00765;
 
-import java.util.*;
-
 public class Solution {
-    /*
-        time exceeded
-     */
+    // count circular path
     public int minSwapsCouples(int[] row) {
-        Set<String> set = new HashSet<>();
-        Queue<int[]> q = new LinkedList<>();
-        Queue<Integer> distance = new LinkedList<>();
+        int N = row.length / 2;
+        int[] position = new int[row.length];
 
-        set.add(Arrays.toString(row));
-        q.add(row);
-        distance.add(0);
+        for (int i = 0; i < row.length; i++)
+            position[row[i]] = i;
 
-        while(!q.isEmpty()) {
-            int curDistance = distance.poll();
-            int[] curRow = q.poll();
+        int count = 0;
+        boolean[] visited = new boolean[N];
+        for (int i = 0; i < N; i++) {
+            if (!visited[i])
+                count++;
 
-            if(isAllCoupleHoldingHands(curRow))
-                return curDistance;
-
-            for(int i = 0 ; i < row.length ; ++i) {
-                int[] swapped = swap(curRow.clone(), i);
-                if(swapped.length == 0)
-                    continue;
-
-                String swappedStr = Arrays.toString(swapped);
-
-                if(!set.contains(swappedStr)) {
-                    set.add(swappedStr);
-                    q.add(swapped);
-                    distance.add(curDistance + 1);
-                }
+            int next = 2 * i;
+            while (!visited[next / 2]) {
+                visited[next / 2] = true;
+                int pairVal = row[couplesNum(next)];
+                next = position[couplesNum(pairVal)];
             }
         }
 
-
-        return -1;
+        return N - count;
     }
 
-    private int[] swap(int[] arr, int i) {
-        int targetNum = arr[i];
-        int swapTargetIdx = (i % 2 == 0) ? i + 1 : i - 1;
-        int coupleNum = (targetNum % 2 == 0) ? targetNum + 1 : targetNum - 1;
-
-        int swapCoupleTargetIdx = 0;
-        for(int j = 0 ; j < arr.length ; ++j) {
-            if(arr[j] == coupleNum) {
-                swapCoupleTargetIdx = j;
-                break;
-            }
-        }
-
-        if(Math.abs(i - swapCoupleTargetIdx) == 1)
-            return new int[] {};
-
-        int temp = arr[swapTargetIdx];
-        arr[swapTargetIdx] = arr[swapCoupleTargetIdx];
-        arr[swapCoupleTargetIdx] = temp;
-
-        return arr;
-    }
-
-    private boolean isAllCoupleHoldingHands(int[] row) {
-        for(int i = 0 ; i < row.length ; i += 2) {
-            if(Math.abs(row[i + 1] - row[i]) == 1)
-                return false;
-        }
-
-        return true;
+    private int couplesNum(int num) {
+        return num % 2 == 0 ? num + 1 : num - 1;
     }
 }
