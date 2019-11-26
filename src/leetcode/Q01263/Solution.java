@@ -52,6 +52,7 @@ public class Solution {
                 if(pushY < 0 || pushX < 0 || pushY >= grid.length || pushX >= grid[0].length || grid[pushY][pushX] == WALL)
                     continue;
 
+                // TODO: 2019/11/26 implements logic that check from cur players position to push position can reachable
 
                 visited[nextY][nextX] = visited[curY][curX] + 1;
                 qy.add(nextY);
