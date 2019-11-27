@@ -12,7 +12,6 @@ public class Solution {
     private static final int[] my = {0, 1, 0, -1};
     private int goalY = -1, goalX = -1;
 
-    private int[][] visited;
     private char[][] grid;
     private Set<Way> ways = new HashSet<>();
 
@@ -27,7 +26,7 @@ public class Solution {
         if(q.isEmpty())
             return -1;
 
-        visited = new int[grid.length][grid[0].length];
+        int[][] visited = new int[grid.length][grid[0].length];
 
         for(int i = 0 ; i < grid.length ; ++i)
             Arrays.fill(visited[i], -1);
@@ -44,7 +43,7 @@ public class Solution {
                 continue;
 
             // change push direction & update visited
-            curPosition.move();
+            curPosition.move(); // 중요
             visited[curPosition.boxY][curPosition.boxX] = visited[curPosition.playerY][curPosition.playerX] + 1;
             checkReachableWithUpdatedGrid(q, curPosition);
         }
@@ -52,6 +51,11 @@ public class Solution {
         return -1;
     }
 
+    /*
+        grid를 현재 position에 맞춰 업데이트 하고, 이전 상태로 복구
+        주의할 점은 . 과 B를 덮어 씌우고 복구하는 과정에서 다른 문자열 T나 S를 덮어 씌우기 때문에
+        T(목표점)에 대해서는 미리 저장해 두고 있어야한다.
+     */
     private void checkReachableWithUpdatedGrid(Queue<Position> positionQueue, Position curPosition) {
         int originBoxY = -1, originBoxX = -1;
 
@@ -74,6 +78,15 @@ public class Solution {
         grid[originBoxY][originBoxX] = BOX;
     }
 
+    /*
+        일반적인 BFS 을 따름
+        현재 플레이어 위치에서 박스의 상하좌우 까지 도달할 수 있는지 체크한 후
+        positionQueue (탐색의 대상이 되는 위치들을 모은 큐)에 넣어준다.
+        이때 중요한건 Set을 이용하여 박스의 위치와 플레이어의 위치 즉, 박스를 미는 뱡향을 저장해
+        한번 밀었던 방향으로는 또 다시 밀지 않도록 방지한다.
+
+        set을 사용하지 않는 경우 timeout 발생함.
+     */
     private void checkReachable(Queue<Position> positionQueue, Position position) {
         boolean[][] visited = new boolean[grid.length][grid[0].length];
 
@@ -166,6 +179,10 @@ public class Solution {
         }
     }
 
+    /*
+        position 클래스와 동일한데 따로 만든 이유는 position 클래스 내부의 move 때문임.
+        set에 저장되어 비교를 할때 의도치 않은 결과를 발생시킴.
+     */
     protected class Way {
         int boxY, boxX, playerY, playerX;
 
