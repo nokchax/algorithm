@@ -1,8 +1,6 @@
 package leetcode.Q01263;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Solution {
     private static final char WALL = '#';
@@ -12,105 +10,225 @@ public class Solution {
 
     private static final int[] mx = {1, 0, -1, 0};
     private static final int[] my = {0, 1, 0, -1};
-    private static final int[] pushPositionX = {-1, 0, 1, 0};
-    private static final int[] pushPositionY = {0, -1, 0, 1};
+    private int goalY = -1, goalX = -1;
 
     private int[][] visited;
+    private char[][] grid;
+    private Set<Way> ways = new HashSet<>();
+
+    protected class Way {
+        int boxY, boxX, playerY, playerX;
+        Way(int boxY, int boxX, int playerY, int playerX) {
+            this.boxX = boxX;
+            this.boxY = boxY;
+            this.playerY = playerY;
+            this.playerX = playerX;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Way way = (Way) o;
+            return boxY == way.boxY &&
+                    boxX == way.boxX &&
+                    playerY == way.playerY &&
+                    playerX == way.playerX;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(boxY, boxX, playerY, playerX);
+        }
+    }
 
     public int minPushBox(char[][] grid) {
-        if(!checkReachable(grid))
+        this.grid = grid;
+        Queue<Position> q = new LinkedList<>();
+        Position initPosition = new Position();
+        checkInitPosition(initPosition);
+        checkReachable(q, initPosition);
+
+        if(q.isEmpty())
             return -1;
 
         visited = new int[grid.length][grid[0].length];
+
         for(int i = 0 ; i < grid.length ; ++i)
             Arrays.fill(visited[i], -1);
 
+        visited[initPosition.boxY][initPosition.boxX] = 0;
 
-        Queue<Integer> qx = new LinkedList<>();
-        Queue<Integer> qy = new LinkedList<>();
-        getPositionOfChar(grid, BOX, qy, qx);
-        visited[qy.peek()][qx.peek()] = 0;
+        while(!q.isEmpty()) {
+            Position curPosition = q.poll();
 
-        while(!qx.isEmpty()) {
-            int curX = qx.poll();
-            int curY = qy.poll();
-
-            if(grid[curY][curX] == GOAL) {
+            if(curPosition.boxY == goalY && curPosition.boxX == goalX) {
                 print(visited);
-                return visited[curY][curX];
+                return visited[curPosition.boxY][curPosition.boxX];
             }
 
-            for(int move = 0 ; move < my.length ; ++move) {
-                int nextY = curY + my[move];
-                int nextX = curX + mx[move];
+            if(!curPosition.isBoxMovable())
+                continue;
 
-                if(nextY < 0 || nextX < 0 || nextY >= grid.length || nextX >= grid[0].length || visited[nextY][nextX] > -1 || grid[nextY][nextX] == WALL)
-                    continue;
-                int pushY = curY + pushPositionY[move];
-                int pushX = curX + pushPositionX[move];
-
-                if(pushY < 0 || pushX < 0 || pushY >= grid.length || pushX >= grid[0].length || grid[pushY][pushX] == WALL)
-                    continue;
-
-                // TODO: 2019/11/26 implements logic that check from cur players position to push position can reachable
-
-                visited[nextY][nextX] = visited[curY][curX] + 1;
-                qy.add(nextY);
-                qx.add(nextX);
-            }
+            // change push direction & update visited
+            curPosition.move();
+            visited[curPosition.boxY][curPosition.boxX] = visited[curPosition.playerY][curPosition.playerX] + 1;
+            checkReachableWithUpdatedGrid(q, curPosition);
         }
 
         print(visited);
         return -1;
     }
 
-    private boolean checkReachable(char[][] grid) {
-        boolean[][] visited = new boolean[grid.length][grid[0].length];
-        Queue<Integer> playerY = new LinkedList<>();
-        Queue<Integer> playerX = new LinkedList<>();
-        getPositionOfChar(grid, PLAYER, playerY, playerX);
+    private void checkReachableWithUpdatedGrid(Queue<Position> positionQueue, Position curPosition) {
+        int originBoxY = -1, originBoxX = -1;
 
-        while(!playerX.isEmpty()) {
-            int curY = playerY.poll();
-            int curX = playerX.poll();
-            if(grid[curY][curX] == BOX)
-                return true;
+        for(int y = 0 ; y < grid.length ; ++y) {
+            for(int x = 0 ; x < grid[0].length ; ++x) {
+                if(grid[y][x] == BOX) {
+                    originBoxY = y;
+                    originBoxX = x;
+                }
+            }
+
+            if(originBoxX > -1)
+                break;
+        }
+
+        grid[originBoxY][originBoxX] = '.';
+        grid[curPosition.boxY][curPosition.boxX] = BOX;
+        checkReachable(positionQueue, curPosition);
+        grid[curPosition.boxY][curPosition.boxX] = '.';
+        grid[originBoxY][originBoxX] = BOX;
+    }
+
+    private void checkReachable(Queue<Position> positionQueue, Position position) {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+
+        Queue<Integer> qy = new LinkedList<>();
+        Queue<Integer> qx = new LinkedList<>();
+        qy.add(position.playerY);
+        qx.add(position.playerX);
+        visited[position.playerY][position.playerX] = true;
+
+        while(!qy.isEmpty()) {
+            int curY = qy.poll();
+            int curX = qx.poll();
 
             for(int move = 0 ; move < mx.length ; ++move) {
                 int nextY = curY + my[move];
                 int nextX = curX + mx[move];
 
-                if(nextY < 0 || nextX < 0 || nextY >= grid.length || nextX >= grid[0].length || visited[nextY][nextX] || grid[nextY][nextX] == WALL)
+                if(isNotCandidate(nextY, nextX) || visited[nextY][nextX])
                     continue;
 
+                if(nextY == position.boxY && nextX == position.boxX) {
+                    Position newPosition = new Position(position.boxY, position.boxX, curY, curX);
+                    Way newWay = new Way(position.boxY, position.boxX, curY, curX);
+                    if(!ways.contains(newWay)) {
+                        ways.add(newWay);
+                        positionQueue.add(newPosition);
+                    }
+                    continue;
+                }
+
                 visited[nextY][nextX] = true;
-                playerY.add(nextY);
-                playerX.add(nextX);
+                qy.add(nextY);
+                qx.add(nextX);
             }
         }
-
-        return false;
     }
 
+    private boolean isNotCandidate(int y, int x) {
+        return y < 0 || x < 0 || y >= grid.length || x >= grid[0].length || grid[y][x] == WALL;
+    }
 
-    private void getPositionOfChar(char[][] grid, char targetChar, Queue<Integer> qy, Queue<Integer> qx) {
+    private void checkInitPosition(Position position) {
         for(int y = 0 ; y < grid.length ; ++y) {
             for(int x = 0 ; x < grid[0].length ; ++x) {
-                if(grid[y][x] == targetChar) {
-                    qy.add(y);
-                    qx.add(x);
-                    return;
+                if(grid[y][x] == BOX) {
+                    position.boxY = y;
+                    position.boxX = x;
+                } else if(grid[y][x] == PLAYER) {
+                    position.playerY = y;
+                    position.playerX = x;
+                } else if(grid[y][x] == GOAL) {
+                    goalY = y;
+                    goalX = x;
                 }
             }
         }
     }
 
     private void print(int[][] visited) {
+        System.out.println();
         for(int y = 0 ; y < visited.length ; ++y) {
             for(int x = 0 ; x < visited[0].length ; ++x) {
                 System.out.printf("%2d ", visited[y][x]);
             }
             System.out.println();
+        }
+        System.out.println();
+    }
+
+    private void printChar(char[][] visited) {
+        System.out.println();
+        for(int y = 0 ; y < visited.length ; ++y) {
+            for(int x = 0 ; x < visited[0].length ; ++x) {
+                System.out.printf("%2c ", visited[y][x]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    protected class Position {
+        int boxY, boxX, playerX, playerY;
+
+        Position() {}
+
+        Position(int boxY, int boxX, int playerY, int playerX) {
+            this.boxY = boxY;
+            this.boxX = boxX;
+            this.playerY = playerY;
+            this.playerX = playerX;
+        }
+
+        int nextBoxY() {
+            return this.boxY * 2 - playerY;
+        }
+
+        int nextBoxX() {
+            return this.boxX * 2 - playerX;
+        }
+
+        boolean isBoxMovable() {
+            return !isNotCandidate(this.nextBoxY(), this.nextBoxX());
+        }
+
+        void move() {
+            int nextBoxY = this.nextBoxY();
+            int nextBoxX = this.nextBoxX();
+            this.playerY = this.boxY;
+            this.playerX = this.boxX;
+            this.boxY = nextBoxY;
+            this.boxX = nextBoxX;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Position position = (Position) o;
+            return boxY == position.boxY &&
+                    boxX == position.boxX &&
+                    playerX == position.playerX &&
+                    playerY == position.playerY;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(boxY, boxX, playerX, playerY);
         }
     }
 }
