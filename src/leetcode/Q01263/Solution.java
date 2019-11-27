@@ -16,31 +16,6 @@ public class Solution {
     private char[][] grid;
     private Set<Way> ways = new HashSet<>();
 
-    protected class Way {
-        int boxY, boxX, playerY, playerX;
-        Way(int boxY, int boxX, int playerY, int playerX) {
-            this.boxX = boxX;
-            this.boxY = boxY;
-            this.playerY = playerY;
-            this.playerX = playerX;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Way way = (Way) o;
-            return boxY == way.boxY &&
-                    boxX == way.boxX &&
-                    playerY == way.playerY &&
-                    playerX == way.playerX;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(boxY, boxX, playerY, playerX);
-        }
-    }
 
     public int minPushBox(char[][] grid) {
         this.grid = grid;
@@ -62,10 +37,8 @@ public class Solution {
         while(!q.isEmpty()) {
             Position curPosition = q.poll();
 
-            if(curPosition.boxY == goalY && curPosition.boxX == goalX) {
-                print(visited);
+            if(curPosition.boxY == goalY && curPosition.boxX == goalX)
                 return visited[curPosition.boxY][curPosition.boxX];
-            }
 
             if(!curPosition.isBoxMovable())
                 continue;
@@ -76,7 +49,6 @@ public class Solution {
             checkReachableWithUpdatedGrid(q, curPosition);
         }
 
-        print(visited);
         return -1;
     }
 
@@ -160,28 +132,6 @@ public class Solution {
         }
     }
 
-    private void print(int[][] visited) {
-        System.out.println();
-        for(int y = 0 ; y < visited.length ; ++y) {
-            for(int x = 0 ; x < visited[0].length ; ++x) {
-                System.out.printf("%2d ", visited[y][x]);
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    private void printChar(char[][] visited) {
-        System.out.println();
-        for(int y = 0 ; y < visited.length ; ++y) {
-            for(int x = 0 ; x < visited[0].length ; ++x) {
-                System.out.printf("%2c ", visited[y][x]);
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
     protected class Position {
         int boxY, boxX, playerX, playerY;
 
@@ -214,21 +164,32 @@ public class Solution {
             this.boxY = nextBoxY;
             this.boxX = nextBoxX;
         }
+    }
+
+    protected class Way {
+        int boxY, boxX, playerY, playerX;
+
+        Way(int boxY, int boxX, int playerY, int playerX) {
+            this.boxX = boxX;
+            this.boxY = boxY;
+            this.playerY = playerY;
+            this.playerX = playerX;
+        }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Position position = (Position) o;
-            return boxY == position.boxY &&
-                    boxX == position.boxX &&
-                    playerX == position.playerX &&
-                    playerY == position.playerY;
+            Way way = (Way) o;
+            return boxY == way.boxY &&
+                    boxX == way.boxX &&
+                    playerY == way.playerY &&
+                    playerX == way.playerX;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(boxY, boxX, playerX, playerY);
+            return Objects.hash(boxY, boxX, playerY, playerX);
         }
     }
 }
