@@ -7,46 +7,52 @@ public class Solution {
     private Map<String, Integer> cache = new HashMap<>();
 
     public int maxScoreWords(String[] words, char[] letters, int[] score) {
-        Map<Character, Integer> scores = createScoreMap(score);
-        Map<Character, Integer> counts = createCountMap(letters);
+        int[] letterCounts = createCountMap(letters);
 
         int max = 0;
         for(int i = 0 ; i < words.length ; ++i) {
-            max = Math.max(max, backtracking(0, 0, words, scores, counts));
+            max = Math.max(max, backtracking(0, i, words, score, letterCounts, 0));
         }
 
         return max;
     }
 
 
-    private int backtracking(int curSum, int putIdx, String[] words, Map<Character, Integer> scores, Map<Character, Integer> counts) {
-        if(isNotValid(words[putIdx], counts)) {
+    private int backtracking(int curSum, int putIdx, String[] words, int[] scores, int[] counts, int depth) {
+        if(putIdx >= words.length) {
             return curSum;
         }
 
-        int max = 0;
+        int max = curSum;
 
-        for(int i = putIdx + 1 ; i < words.length ; ++i) {
+        //skip cur
+        for(int i = putIdx ; i < words.length ; ++i) {
+            int tempScore = backtracking(curSum, i + 1, words, scores, counts, depth + 1);
+            max = Math.max(max, tempScore);
+        }
+
+        if(isValid(words[putIdx], counts)) {
+            //skip
             //- counts;
             int[] tempCount = getCounts(words[putIdx]);
             calculateCounts(counts, tempCount, false);
+            int score = calculateScore(words[putIdx], scores);
 
-            int score = calculateScore(words[putIdx], scores, counts);
+            for (int i = putIdx ; i < words.length; ++i) {
+                int tempScore = backtracking(curSum + score, i + 1, words, scores, counts, depth + 1);
+                max = Math.max(max, tempScore);
+            }
 
-            int tempScore = backtracking(curSum + score, i, words, scores, counts);
-            max = Math.max(max, curSum + tempScore);
-
-            //rollback counts;
             calculateCounts(counts, tempCount, true);
         }
 
         return max;
     }
 
-    private void calculateCounts(Map<Character, Integer> counts, int[] tempCount, boolean isPlus) {
+    private void calculateCounts(int[] counts, int[] tempCount, boolean isPlus) {
         for(int i = 0 ; i < 26 ; ++i) {
-            int prevCount = counts.getOrDefault((char)('a' + i), 0);
-            counts.put((char)('a' + i), prevCount + (isPlus ? (tempCount[i]) : (-tempCount[i])));
+            int prevCount = counts[i];
+            counts[i] = prevCount + (isPlus ? (tempCount[i]) : (-1 * tempCount[i]));
         }
     }
 
@@ -60,7 +66,7 @@ public class Solution {
         return count;
     }
 
-    private boolean isNotValid(String word, Map<Character, Integer> counts) {
+    private boolean isValid(String word, int[] counts) {
         int[] count = new int[26];
 
         for(int i = 0 ; i < word.length() ; ++i) {
@@ -68,7 +74,7 @@ public class Solution {
         }
 
         for(int i = 0 ; i < 26 ; ++i) {
-            if(counts.getOrDefault((char)(i + 'a'), 0) - count[i] < 0) {
+            if(counts[i] < count[i]) {
                 return false;
             }
         }
@@ -76,24 +82,15 @@ public class Solution {
         return true;
     }
 
-    private int calculateScore(String word, Map<Character, Integer> scores, Map<Character, Integer> counts) {
+    private int calculateScore(String word, int[] scores) {
         if(cache.containsKey(word)) {
             return cache.get(word);
         }
 
-        int[] countPerChar = new int[26];
-
         int score = 0;
 
         for(char c : word.toCharArray()) {
-            int index = c - 'a';
-            countPerChar[index]++;
-
-            if(countPerChar[index] > counts.getOrDefault(c, 0)) {
-                return 0;
-            }
-
-            score += scores.getOrDefault(c, 0);
+            score += scores[c - 'a'];
         }
 
         cache.put(word, score);
@@ -101,24 +98,15 @@ public class Solution {
         return score;
     }
 
-    private Map<Character, Integer> createCountMap(char[] letters) {
-        Map<Character, Integer> count = new HashMap<>();
+    private int[] createCountMap(char[] letters) {
+        int[] count = new int[26];
+
+
 
         for(char c : letters) {
-            int prevCount = count.getOrDefault(c, 0);
-            count.put(c, prevCount + 1);
+            count[c - 'a']++;
         }
 
         return count;
-    }
-
-    private Map<Character, Integer> createScoreMap(int[] score) {
-        Map<Character, Integer> map = new HashMap<>();
-
-        for(int i = 'a' ; i <= 'z' ; ++i) {
-            map.put((char)i, score[i - 'a']);
-        }
-
-        return map;
     }
 }
