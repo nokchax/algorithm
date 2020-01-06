@@ -1,7 +1,5 @@
 package leetcode.Q01284;
 
-import javafx.util.Pair;
-
 import java.util.*;
 
 public class SolutionUsingBitOperation {
@@ -10,7 +8,7 @@ public class SolutionUsingBitOperation {
 
     public int minFlips(int[][] mat) {
         Set<Integer> set = new HashSet<>();
-        Queue<Pair<Integer, Integer>> q = new LinkedList<>();
+        Queue<int[]> q = new LinkedList<>();
 
         int start = 0;
 
@@ -21,11 +19,11 @@ public class SolutionUsingBitOperation {
         }
 
         set.add(start);
-        q.add(new Pair<>(start, 0));
+        q.add(new int[]{start, 0});
 
         while(!q.isEmpty()) {
-            int curPosition = q.peek().getKey();
-            int count = q.poll().getValue();
+            int curPosition = q.peek()[0];
+            int count = q.poll()[1];
 
             if(curPosition == 0) {
                 return count;
@@ -51,7 +49,7 @@ public class SolutionUsingBitOperation {
                     }
 
                     set.add(newPosition);
-                    q.add(new Pair<>(newPosition, count + 1));
+                    q.add(new int[]{newPosition, count + 1});
                 }
             }
         }
