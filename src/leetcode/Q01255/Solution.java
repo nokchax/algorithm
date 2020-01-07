@@ -10,12 +10,7 @@ public class Solution {
     public int maxScoreWords(String[] words, char[] letters, int[] score) {
         int[] letterCounts = createCountMap(letters);
 
-        int max = 0;
-        for(int i = 0 ; i < words.length ; ++i) {
-            max = Math.max(max, backtracking(0, i, words, score, letterCounts));
-        }
-
-        return max;
+        return Math.max(0, backtracking(0, 0, words, score, letterCounts));
     }
 
 
@@ -27,10 +22,7 @@ public class Solution {
         int max = curSum;
 
         //skip cur
-        for(int i = putIdx ; i < words.length ; ++i) {
-            int tempScore = backtracking(curSum, i + 1, words, scores, counts);
-            max = Math.max(max, tempScore);
-        }
+        max = Math.max(max, backtracking(curSum, putIdx + 1, words, scores, counts));
 
         if(isValid(words[putIdx], counts)) {
             //skip
@@ -39,10 +31,7 @@ public class Solution {
             calculateCounts(counts, tempCount, false);
             int score = calculateScore(words[putIdx], scores);
 
-            for (int i = putIdx ; i < words.length; ++i) {
-                int tempScore = backtracking(curSum + score, i + 1, words, scores, counts);
-                max = Math.max(max, tempScore);
-            }
+            max = Math.max(max, backtracking(curSum + score, putIdx + 1, words, scores, counts));
 
             calculateCounts(counts, tempCount, true);
         }
