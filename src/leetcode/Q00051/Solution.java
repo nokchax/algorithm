@@ -1,24 +1,23 @@
 package leetcode.Q00051;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Solution {
     public List<List<String>> solveNQueens(int n) {
         List<List<String>> answerSet = new ArrayList<>();
+        Map<Integer, String> map = init(n);
 
         List<String> candidate = new ArrayList<>();
         for(int i = 0 ; i < n ; ++i) {
-            candidate.add(mark(0, n, '.'));
+            candidate.add(map.get(-1));
         }
 
-        backtracking(answerSet, candidate, 0, n);
+        backtracking(answerSet, candidate, map, 0, n);
 
         return answerSet;
     }
 
-    public void backtracking(List<List<String>> answerSet, List<String> candidate, int row, int n) {
+    public void backtracking(List<List<String>> answerSet, List<String> candidate, Map<Integer, String> map, int row, int n) {
         if(row == n) {
             List<String> temp = new ArrayList<>(candidate.size());
             temp.addAll(candidate);
@@ -31,25 +30,29 @@ public class Solution {
             if(check(candidate, row, i, n)) {
                 continue;
             }
-            candidate.set(row, mark(i, n, 'Q'));
-            backtracking(answerSet, candidate, row + 1, n);
-            candidate.set(row, mark(i, n, '.'));
+
+            candidate.set(row, map.get(i));
+            backtracking(answerSet, candidate, map, row + 1, n);
+            candidate.set(row, map.get(-1));
         }
     }
 
-    private String mark(int i, int n, char character) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(int j = 0 ; j < n ; ++j) {
-            if(i == j) {
-                stringBuilder.append(character);
-            }
-            else {
-                stringBuilder.append('.');
-            }
+    public Map<Integer, String> init(int n) {
+        Map<Integer, String> map = new HashMap<>();
+        char[] row = new char[n];
+        for(int i = 0 ; i < n ; ++i) {
+            row[i] = '.';
         }
 
-        return stringBuilder.toString();
+        map.put(-1, String.valueOf(row));
+
+        for(int i = 0 ; i < n ; ++i) {
+            row[i] = 'Q';
+            map.put(i, String.valueOf(row));
+            row[i] = '.';
+        }
+
+        return map;
     }
 
     private boolean check(List<String> candidate, int row, int i, int n) {
