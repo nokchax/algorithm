@@ -29,7 +29,7 @@ class Result {
     public static List<Integer> solution(List<List<Integer>> arr) {
         arr.forEach(subArr -> subArr.sort(Collections.reverseOrder()));
 
-        PriorityQueue<Arr> queue = new PriorityQueue<>();
+        PriorityQueue<Arr> queue = new PriorityQueue<>(Collections.reverseOrder());
         for (int i = 0 ; i < arr.size() ; ++i) {
             queue.add(new Arr(i, arr.get(i)));
         }
@@ -57,7 +57,7 @@ class Arr implements Comparable<Arr> {
     public int compareTo(Arr o) {
         for (int i = 0 ; i < this.bitArr.size() ; ++i) {
             if (this.bitArr.get(i) != o.bitArr.get(i)) {
-                return this.bitArr.get(i) > o.bitArr.get(i) ? -1 : +1;
+                return this.bitArr.get(i) - o.bitArr.get(i);
             }
         }
 
