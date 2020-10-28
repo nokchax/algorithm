@@ -1,23 +1,16 @@
 package test.t1.q1;
 
-import java.io.*;
+import java.util.Scanner;
 
 public class Solution {
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//        BufferedWriter bw = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        String s = br.readLine();
+        String s = sc.nextLine();
 
         long result = Result.solution(s);
-
-        bw.write(String.valueOf(result));
-        bw.newLine();
-
-        br.close();
-        bw.close();
+        System.out.println(result);
     }
 }
 
