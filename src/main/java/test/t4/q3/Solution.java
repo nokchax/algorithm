@@ -1,8 +1,6 @@
 package test.t4.q3;
 
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.*;
 
 public class Solution {
     /*
@@ -38,6 +36,29 @@ public class Solution {
             pq.remove(array[i - k]);
             pq.add(array[i]);
             max = Math.max(max, pq.peek());
+        }
+
+        return max;
+    }
+
+    private static int usingStack(int[] array, int k) {
+        Deque<Integer> deque = new LinkedList<>();
+        int max = Integer.MIN_VALUE;
+
+        for (int i = 0 ; i < array.length ; ++i) {
+            while (!deque.isEmpty() && deque.peekFirst() < i - k - 1) { //k개 범위를 넘어가는 원소 제거
+                deque.pollFirst();
+            }
+
+            while (!deque.isEmpty() && array[deque.peekLast()] < array[i]) { // 현재 값보다 큰 값 제거
+                deque.pollLast();
+            }
+
+            deque.addLast(i);
+
+            if (i > k - 1 && !deque.isEmpty()) {
+                max = Math.max(max, array[deque.peekFirst()]);
+            }
         }
 
         return max;
