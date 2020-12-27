@@ -35,4 +35,14 @@ public class Solution {
 
         return (char) (i + 'a');
     }
+
+    private char getRandomChar2(Character prev, Character next) {
+        int ch = ThreadLocalRandom.current().nextInt('a', 'z' + 1);
+
+        if ((prev != null && prev == ch) || (next != null && next == ch)) {
+            return getRandomChar2(prev, next);
+        }
+
+        return (char) ch;
+    }
 }
