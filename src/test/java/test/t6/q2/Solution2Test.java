@@ -12,8 +12,8 @@ class Solution2Test {
         Solution s = new Solution();
         Solution2 s2 = new Solution2();
 
-        for (int i = 99999 ; i < 1000000 ; ++i) {
-            for (int j = 0 ; j < i ; ++j) {
+        for (int i = 10 ; i < 100 ; ++i) {
+            for (int j = 10 ; j < i ; ++j) {
                 assertThat(s.solution(i, j)).isEqualTo(s2.solution(i, j));
             }
         }
