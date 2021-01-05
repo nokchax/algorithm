@@ -9,6 +9,9 @@ public class Solution {
 
     // not perfect solution
     // timeout? or correctness?
+    // 시간 복잡도는 DFS, BFS 동일하므로 시간 복잡도 문제가 문제가 아니라면
+    // 공간 복잡도 혹은 DFS stack overflow 문제일듯 싶다.
+    // 따라서 BFS를 사용하는 것이 답일듯
     public int solution(int[][] map) {
         boolean[][] visited = new boolean[map.length][map[0].length];
 
@@ -17,7 +20,9 @@ public class Solution {
         for (int y = 0 ; y < map.length ; ++y) {
             for (int x = 0 ; x < map[0].length ; ++x) {
                 if (!visited[y][x]) {
-                    dfs(y, x, map, visited);
+                    visited[y][x] = true;
+                    //dfs(y, x, map, visited);
+                    bfs(y, x, map, visited);
                     area++;
                 }
             }
@@ -50,7 +55,6 @@ public class Solution {
 
         while (!q.isEmpty()) {
             int[] curPosition = q.poll();
-            visited[curPosition[0]][curPosition[1]] = true;
 
             for (int move = 0 ; move < MX.length ; ++move) {
                 int nextY = curY + MY[move];
@@ -61,6 +65,7 @@ public class Solution {
                 }
 
                 if (map[curPosition[0]][curPosition[1]] == map[nextY][nextX]) {
+                    visited[nextY][nextX] = true; // bfs 시작부분에서 true로 할 경우 중복적으로 탐색할 가능성이 있으므로 추가할때 넣어주도록 하자.
                     q.add(new int[]{nextY, nextX});
                 }
             }
