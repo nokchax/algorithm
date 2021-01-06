@@ -20,7 +20,6 @@ public class Solution {
         for (int y = 0 ; y < map.length ; ++y) {
             for (int x = 0 ; x < map[0].length ; ++x) {
                 if (!visited[y][x]) {
-                    visited[y][x] = true;
                     //dfs(y, x, map, visited);
                     bfs(y, x, map, visited);
                     area++;
@@ -49,12 +48,14 @@ public class Solution {
         }
     }
 
-    private void bfs(int curY, int curX, int[][] map, boolean[][] visited) {
+    private void bfs(int startY, int startX, int[][] map, boolean[][] visited) {
         Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{curY, curX});
+        q.add(new int[]{startY, startX});
+        visited[startY][startX] = true;
 
         while (!q.isEmpty()) {
-            int[] curPosition = q.poll();
+            int curY = q.peek()[0];
+            int curX = q.poll()[1];
 
             for (int move = 0 ; move < MX.length ; ++move) {
                 int nextY = curY + MY[move];
@@ -64,7 +65,7 @@ public class Solution {
                     continue;
                 }
 
-                if (map[curPosition[0]][curPosition[1]] == map[nextY][nextX]) {
+                if (map[curY][curX] == map[nextY][nextX]) {
                     visited[nextY][nextX] = true; // bfs 시작부분에서 true로 할 경우 중복적으로 탐색할 가능성이 있으므로 추가할때 넣어주도록 하자.
                     q.add(new int[]{nextY, nextX});
                 }
