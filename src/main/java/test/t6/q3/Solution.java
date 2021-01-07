@@ -49,24 +49,25 @@ public class Solution {
     }
 
     private void bfs(int startY, int startX, int[][] map, boolean[][] visited) {
+        visited[startY][startX] = true;
+
         Queue<int[]> q = new LinkedList<>();
         q.add(new int[]{startY, startX});
-        visited[startY][startX] = true;
 
         while (!q.isEmpty()) {
             int curY = q.peek()[0];
             int curX = q.poll()[1];
 
-            for (int move = 0 ; move < MX.length ; ++move) {
-                int nextY = curY + MY[move];
-                int nextX = curX + MX[move];
+            for (int direction = 0 ; direction < MX.length ; ++direction) {
+                int nextY = curY + MY[direction];
+                int nextX = curX + MX[direction];
 
                 if (nextY < 0 || nextX < 0 || nextY >= map.length || nextX >= map[0].length || visited[nextY][nextX]) {
                     continue;
                 }
 
                 if (map[curY][curX] == map[nextY][nextX]) {
-                    visited[nextY][nextX] = true; // bfs 시작부분에서 true로 할 경우 중복적으로 탐색할 가능성이 있으므로 추가할때 넣어주도록 하자.
+                    visited[nextY][nextX] = true; // 넣기전에 true로 하지 않으면 같은 위치의 값이 여러번 들어갈 수 있으므로 중복의 연산의 가능성이 존재한다.
                     q.add(new int[]{nextY, nextX});
                 }
             }
