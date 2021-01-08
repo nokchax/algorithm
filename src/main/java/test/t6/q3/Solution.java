@@ -10,7 +10,7 @@ public class Solution {
     // not perfect solution
     // timeout? or correctness?
     // 시간 복잡도는 DFS, BFS 동일하므로 시간 복잡도 문제가 문제가 아니라면
-    // 공간 복잡도 혹은 DFS stack overflow 문제일듯 싶다.
+    // 공간 복잡도 혹은 DFS stack overflow 문제일듯 싶다. or 함수 호출로 인한 시간낭비로 타임아웃
     // 따라서 BFS를 사용하는 것이 답일듯
     public int solution(int[][] map) {
         boolean[][] visited = new boolean[map.length][map[0].length];
