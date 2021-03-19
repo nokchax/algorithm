@@ -43,12 +43,12 @@ public class MyCode {
         }
 
         visited[cur] = true;
-
         for (int next = 0 ; next < visited.length ; ++next) {
-            if (map[cur][next]) {
+            if (map[cur][next] && checkCircular(map, visited, next)) {
                 return true;
             }
         }
+        visited[cur] = false;
 
         return false;
     }
