@@ -11,33 +11,33 @@ class Q00001 {
         print(solution.twoSum(intArrayOf(3, 3), 6)) // 0, 1
     }
 
-}
+    class Solution {
+        fun twoSum(nums: IntArray, target: Int): IntArray {
+            val sortedArray = nums.copyOf().sorted()
 
-class Solution {
-    fun twoSum(nums: IntArray, target: Int): IntArray {
-        val sortedArray = nums.copyOf().sorted()
+            var frontIdx = 0
+            var rearIdx = nums.size - 1
 
-        var frontIdx = 0
-        var rearIdx = nums.size - 1
+            while (frontIdx < rearIdx) {
+                val sum = sortedArray[frontIdx] + sortedArray[rearIdx]
 
-        while (frontIdx < rearIdx) {
-            val sum = sortedArray[frontIdx] + sortedArray[rearIdx]
-
-            if (sum == target) {
-                break
-            } else if (sum < target) {
-                ++frontIdx
-            } else {
-                --rearIdx
+                if (sum == target) {
+                    break
+                } else if (sum < target) {
+                    ++frontIdx
+                } else {
+                    --rearIdx
+                }
             }
+
+            val originIdxOfFront = nums.indexOf(sortedArray[frontIdx])
+            val originIdxOfRear = nums.lastIndexOf(sortedArray[rearIdx])
+
+            return intArrayOf(originIdxOfFront, originIdxOfRear)
         }
-
-        val originIdxOfFront = nums.indexOf(sortedArray[frontIdx])
-        val originIdxOfRear = nums.lastIndexOf(sortedArray[rearIdx])
-
-        return intArrayOf(originIdxOfFront, originIdxOfRear)
     }
 }
+
 
 
 // 배열 복사하기 IntArray.copyOf()
