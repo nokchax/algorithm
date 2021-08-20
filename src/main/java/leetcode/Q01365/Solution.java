@@ -1,3 +1,5 @@
+package leetcode.Q01365;
+
 class Solution {
     public int[] smallerNumbersThanCurrent(int[] nums) {
         int[] stack = new int[101];

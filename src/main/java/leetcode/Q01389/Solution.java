@@ -1,3 +1,8 @@
+package leetcode.Q01389;
+
+import java.util.LinkedList;
+import java.util.List;
+
 class Solution {
     public int[] createTargetArray(int[] nums, int[] index) {
         List<Integer> array = new LinkedList<>();

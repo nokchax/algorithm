@@ -1,3 +1,10 @@
+package leetcode.Q01436;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 class Solution {
     public String destCity(List<List<String>> paths) {
         Map<String, List<String>> path = new HashMap<>();

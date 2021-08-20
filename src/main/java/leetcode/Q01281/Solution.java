@@ -1,3 +1,5 @@
+package leetcode.Q01281;
+
 class Solution {
     public int subtractProductAndSum(int n) {
         String numStr = String.valueOf(n);
