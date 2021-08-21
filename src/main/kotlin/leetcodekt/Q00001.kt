@@ -1,29 +1,18 @@
 package leetcodekt
 
 
-class Soution {
+class Solution {
     fun twoSum(nums: IntArray, target: Int): IntArray {
-        val sortedArray = nums.copyOf().sorted()
+        val map = HashMap<Int, Int>()
 
-        var frontIdx = 0
-        var rearIdx = nums.size - 1
-
-        while (frontIdx < rearIdx) {
-            val sum = sortedArray[frontIdx] + sortedArray[rearIdx]
-
-            if (sum == target) {
-                break
-            } else if (sum < target) {
-                ++frontIdx
-            } else {
-                --rearIdx
+        nums.forEachIndexed { index, num ->
+            if (map.containsKey(target - num)) {
+                return intArrayOf(map[target - num]!!, index) // !!는  강제 not null 처리
             }
+            map[num] = index
         }
 
-        val originIdxOfFront = nums.indexOf(sortedArray[frontIdx])
-        val originIdxOfRear = nums.lastIndexOf(sortedArray[rearIdx])
-
-        return intArrayOf(originIdxOfFront, originIdxOfRear)
+        return intArrayOf()
     }
 }
 
@@ -32,6 +21,12 @@ class Soution {
 // 배열 복사하기 IntArray.copyOf()
 // 배열 정렬하기 sort(), 내림차순 sortDescending()
 // 배열 정렬후 리스트로 반환 sorted(), sortedDescending()
+// !! 는 nullable 로 설정된 속성을 강제로 not null 로 바꿔줌
+// type 에 ? 를 붙이면 null 이 가능한 변수임을 표시하는 것
+// 변수?. (변수 뒤에 ?. 연산자) 변수가 null 이 아닐 때만 뒤에 함수가 실행, 그렇지 않다면 null 을 반환
+// let 함수 변수가 not null 인 경우에만 지정된 구문을 실행시키는 let 함수
+// let 함수를 사용하면 자신의 receiver 객를 람다식 내부로 넘겨줌
+// let 함수 내부에서는 receiver 객체를 it 으로 받아서 표현
 
 // another solution
 /*

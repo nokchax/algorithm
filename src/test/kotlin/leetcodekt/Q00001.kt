@@ -10,7 +10,7 @@ class Q00001 {
     @MethodSource
     @ParameterizedTest
     fun solution(nums: IntArray, target: Int, expected: IntArray) {
-        assertThat(Soution().twoSum(nums, target)).isEqualTo(expected)
+        assertThat(Solution().twoSum(nums, target)).isEqualTo(expected)
     }
 
     companion object {
